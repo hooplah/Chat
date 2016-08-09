@@ -9,7 +9,7 @@
 class ChatState : public IState
 {
     public:
-        ChatState(StateMachine& stateMachine, bool replace, std::string name);
+        ChatState(StateMachine& stateMachine, bool replace, Client& client);
         ~ChatState();
 
         void pause() {}
@@ -20,7 +20,7 @@ class ChatState : public IState
         void handleEvents(sf::Event& event);
 
     private:
-        Client mClient;
+        Client& mClient;
         Chat mChat;
 };
 

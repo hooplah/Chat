@@ -1,11 +1,12 @@
-#include "PictureState.h"
+#include "States/PictureState.h"
 
-#include "ChatState.h"
-#include "StateMachine.h"
+#include "States/ChatState.h"
+#include "States/StateMachine.h"
 
-PictureState::PictureState(StateMachine& machine, bool replace, std::string name) : IState(machine, replace)
+PictureState::PictureState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
+    mClient(client)
 {
-    mTexture.loadFromFile("pic.png");
+    mTexture.loadFromFile("assets/pic.png");
     //mTexture.update(mImage);
     mSprite = sf::Sprite(mTexture);
 }
@@ -30,7 +31,7 @@ void PictureState::handleEvents(sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right)
         {
-            mNext = StateMachine::build<ChatState>(mMachine, true, "lucas");
+            mNext = StateMachine::build<ChatState>(mMachine, false, std::ref(mClient));
         }
     }
 }

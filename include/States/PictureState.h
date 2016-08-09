@@ -5,10 +5,12 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Client.h"
+
 class PictureState : public IState
 {
     public:
-        PictureState(StateMachine& machine, bool replace, std::string name);
+        PictureState(StateMachine& stateMachine, bool replace, Client& client);
         ~PictureState();
 
         void pause() {}
@@ -19,6 +21,7 @@ class PictureState : public IState
         void handleEvents(sf::Event& event);
 
     private:
+        Client& mClient;
         sf::Image mImage;
         sf::Texture mTexture;
         sf::Sprite mSprite;

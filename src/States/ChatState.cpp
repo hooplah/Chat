@@ -1,10 +1,11 @@
-#include "ChatState.h"
+#include "States/ChatState.h"
 
-#include "PictureState.h"
-#include "StateMachine.h"
+#include "States/PictureState.h"
+#include "States/StateMachine.h"
 
-ChatState::ChatState(StateMachine& machine, bool replace, std::string name) : IState(machine, replace),
-    mChat(mClient.getSocket(), mClient.getChannel(), name)
+ChatState::ChatState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
+    mClient(client),
+    mChat(mClient.getSocket(), mClient.getChannel())
 {
     //ctor
 }
@@ -32,7 +33,7 @@ void ChatState::handleEvents(sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right)
         {
-            mNext = StateMachine::build<PictureState>(mMachine, false, "lucas");
+            mNext = StateMachine::build<PictureState>(mMachine, false, std::ref(mClient));
         }
     }
 }

@@ -3,8 +3,6 @@
 
 #include <SFML/Graphics/Text.hpp>
 
-#include "User.h"
-
 struct MessageData
 {
     MessageData(std::string name, std::string msg) : name(name), msg(msg) {}

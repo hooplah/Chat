@@ -1,34 +1,42 @@
 #include "Client.h"
 
-#include <iostream>
-
 #include "Constants.h"
 #include "PacketID.h"
 
 Client::Client() :
-    mPacketListener(listenForPackets, &mSocket, &mChannel)
+    mConnected(true), // assume we can connect to the server
+    mPacketListener(listenForPackets, &mSocket, &mChannel, &mConnected)
 {
     if (mSocket.connect(SERVER_IPADDRESS, PORT) == sf::Socket::Done)
-        std::cout << "Connected to " << mSocket.getRemoteAddress() << std::endl;
+        mConnected = true;
+    else
+        mConnected = false;
 }
 
 Client::~Client()
 {
+    disconnect();
     mPacketListener.join();
 }
 
-void Client::update()
+void Client::disconnect()
 {
+    sf::Packet packet;
+    packet << PacketID::DISCONNECT;
+    mSocket.send(packet);
+
+    mConnected = false;
+    mSocket.disconnect();
 }
 
-void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel)
+void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel, std::atomic<bool>* connected)
 {
-    while (true)
+    while (*connected)
     {
         sf::Packet packet;
         if (socket->receive(packet) == sf::Socket::Done)
         {
-            sf::Uint8 type; // what type of packet
+            PacketID type; // what type of packet
             std::string name, senderMsg;
             if (packet >> type >> name >> senderMsg)
             {

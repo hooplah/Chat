@@ -1,5 +1,6 @@
-#include "StateMachine.h"
-#include "IState.h"
+#include "States/StateMachine.h"
+
+#include "States/IState.h"
 
 StateMachine::StateMachine() :
     mResume(false),

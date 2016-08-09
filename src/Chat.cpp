@@ -2,19 +2,13 @@
 
 #include "PacketID.h"
 
-#include <iostream>
-
-Chat::Chat(sf::TcpSocket& socket, Channel<MessageData>& channel, std::string name) :
+Chat::Chat(sf::TcpSocket& socket, Channel<MessageData>& channel) :
     mMaxLines(19),
-    mCurrentMessage(MessageData(name, ""), mFont),
+    mCurrentMessage(MessageData("", ""), mFont),
     mSocket(socket),
     mChannel(channel)
 {
-    mFont.loadFromFile("arial.ttf");
-
-    sf::Packet packet;
-    packet << name;
-    mSocket.send(packet);
+    mFont.loadFromFile("assets/arial.ttf");
 
     mCurrentMessage.setPosition(sf::Vector2f(10.f, 570.f));
 
@@ -47,7 +41,7 @@ void Chat::handleEvents(sf::Event& event)
         else if (event.text.unicode == 13) // enter - send message
         {
             sf::Packet packet;
-            packet << PacketID::TEXT << mCurrentMessage.data.name << mCurrentMessage.data.msg;
+            packet << PacketID::TEXT << mCurrentMessage.data.msg;
             mSocket.send(packet);
 
             mCurrentMessage.data.msg = "";

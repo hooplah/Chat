@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include <atomic>
 #include <mutex>
 #include <thread>
 
@@ -15,14 +16,16 @@ class Client
         Client();
         ~Client();
 
-        void update();
+        void disconnect();
 
-        static void listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel);
+        static void listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel, std::atomic<bool>* connected);
 
+        bool isConnected(){return mConnected;}
         sf::TcpSocket& getSocket(){return mSocket;}
         Channel<MessageData>& getChannel(){return mChannel;}
 
     private:
+        std::atomic<bool> mConnected;
         sf::TcpSocket mSocket;
         Channel<MessageData> mChannel;
         std::thread mPacketListener;

@@ -7,6 +7,7 @@ enum class PacketID: sf::Uint8
 {
     TEXT,
     PICTURE,
+    DISCONNECT,
 };
 
 sf::Packet& operator <<(sf::Packet& packet, const PacketID& id);
