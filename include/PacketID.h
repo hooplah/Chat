@@ -8,6 +8,7 @@ enum class PacketID: sf::Uint8
     TEXT,
     PICTURE,
     DISCONNECT,
+    REQUEST_USERS, // request all online users
 };
 
 sf::Packet& operator <<(sf::Packet& packet, const PacketID& id);

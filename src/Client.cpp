@@ -26,7 +26,7 @@ void Client::disconnect()
     mSocket.send(packet);
 
     mConnected = false;
-    mSocket.disconnect();
+    //mSocket.disconnect();
 }
 
 void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel, std::atomic<bool>* connected)

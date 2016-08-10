@@ -21,14 +21,10 @@ LoginState::~LoginState()
 void LoginState::update()
 {
     ImGui::Begin("Login");
+    ImGui::Text("Username");
 
     ImGui::InputText("", mName, 255);
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::SetTooltip("Username");
-        ImGui::BeginTooltip();
-        ImGui::EndTooltip();
-    }
+    ImGui::SetWindowFocus();
 
     if (ImGui::Button("Login", ImVec2(64.f, 32.f)))
     {

@@ -56,8 +56,8 @@ void Server::update()
             }
             case PacketID::DISCONNECT:
             {
-                (*mClients[clientID]).socket.disconnect();
-                mClients.erase(clientID);
+                //std::cout << (*mClients[clientID]).name << " disconnected" << std::endl;
+                //mClients.erase(clientID);
                 break;
             }
         }
