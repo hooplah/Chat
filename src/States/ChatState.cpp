@@ -5,7 +5,7 @@
 
 ChatState::ChatState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
     mClient(client),
-    mChat(mClient.getSocket(), mClient.getChannel())
+    mChat("Global Chat", mClient.getSocket(), mClient.getChannel())
 {
     //ctor
 }
@@ -22,7 +22,6 @@ void ChatState::update()
 
 void ChatState::draw(sf::RenderTarget& target)
 {
-    mChat.draw(target);
 }
 
 void ChatState::handleEvents(sf::Event& event)
