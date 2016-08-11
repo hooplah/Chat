@@ -4,7 +4,7 @@
 #include "IState.h"
 
 #include "Client.h"
-#include "Chat.h"
+#include "LogWindow.h"
 
 class ChatState : public IState
 {
@@ -21,7 +21,9 @@ class ChatState : public IState
 
     private:
         Client& mClient;
-        Chat mChat;
+        LogWindow mGlobalChat;
+        std::vector<LogWindow> mPrivateChats;
+        //LogWindow mUserList;
 };
 
 #endif // CHATSTATE_H

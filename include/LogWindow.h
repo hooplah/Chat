@@ -1,5 +1,5 @@
-#ifndef CHAT_H
-#define CHAT_H
+#ifndef LOGWINDOW_H
+#define LOGWINDOW_H
 
 #include <deque>
 #include <vector>
@@ -12,20 +12,23 @@
 #include "PacketID.h"
 #include "imgui/imgui.h"
 
-class Chat
+class LogWindow
 {
     public:
-        Chat(const char* title, sf::TcpSocket& socket, Channel<MessageData>& channel);
-        ~Chat();
+        LogWindow(const char* title, sf::TcpSocket& socket, Channel<MessageData>& channel);
+        ~LogWindow();
 
         void clear();
         void send(std::string msg);
         void push(const char* fmt, ...) IM_PRINTFARGS(2);
         void update();
-        void handleEvents(sf::Event& event);
+
+        void setTitle(const char* title){mTitle=title;}
+        void setButtonName(const char* name){mButtonName=name;}
 
     private:
         const char* mTitle;
+        const char* mButtonName;
         char mMessage[255];
         ImGuiTextBuffer mBuffer;
         ImGuiTextFilter mFilter;
@@ -33,7 +36,7 @@ class Chat
         bool mScrollToBottom;
 
         sf::TcpSocket& mSocket;
-        Channel<MessageData>& mChannel;
+        Channel<MessageData>& mMessageChannel;
 };
 
-#endif // CHATG_H
+#endif // LOGWINDOW_H

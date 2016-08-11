@@ -29,6 +29,7 @@ void Server::update()
         mPacketQueue.pop();
         ClientID clientID = std::get<0>(packet_tuple);
         sf::Packet packet = std::get<1>(packet_tuple);
+        ClientHandle& client = (*mClients[clientID]);
         PacketID type;
         packet >> type;
         switch (type)
@@ -36,16 +37,16 @@ void Server::update()
             case PacketID::TEXT:
             {
                 std::string name, msg;
-                name = (*mClients[clientID]).name;
+                name = client.name;
                 packet >> msg;
                 std::cout << name << ": " << msg << std::endl;
 
-                for (auto& client : mClients)
+                for (auto& other_client : mClients)
                 {
                     // construct a new packet and send it to every client
                     sf::Packet out;
                     out << PacketID::TEXT << name << msg;
-                    client.second->socket.send(out);
+                    other_client.second->socket.send(out);
                 }
 
                 break;
@@ -56,8 +57,23 @@ void Server::update()
             }
             case PacketID::DISCONNECT:
             {
-                //std::cout << (*mClients[clientID]).name << " disconnected" << std::endl;
+                std::cout << client.name << " disconnected" << std::endl;
+                //client.socket.disconnect();
                 //mClients.erase(clientID);
+                break;
+            }
+            case PacketID::REQUEST_USERS:
+            {
+                /*std::cout << client.name << " requested user list" << std::endl;
+                sf::Packet out;
+                sf::Uint8 clientSize(mClients.size()-1);
+                out << PacketID::REQUEST_USERS << clientSize;
+                for (auto& other_client : mClients)
+                {
+                    if (other_client.second->name != client.name)
+                        out << client.name;
+                }
+                client.socket.send(out);*/
                 break;
             }
         }

@@ -26,7 +26,7 @@ void LoginState::update()
     ImGui::InputText("", mName, 255);
     ImGui::SetWindowFocus();
 
-    if (ImGui::Button("Login", ImVec2(64.f, 32.f)))
+    if (ImGui::Button("Login") || ImGui::IsKeyPressed(sf::Keyboard::Return))
     {
         if (mClient.isConnected())
         {

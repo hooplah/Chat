@@ -1,34 +1,37 @@
-#include "Chat.h"
+#include "LogWindow.h"
 
 #include "imgui/imgui.h"
 
-Chat::Chat(const char* title, sf::TcpSocket& socket, Channel<MessageData>& channel) :
-    mTitle(title),
-    mSocket(socket),
-    mChannel(channel)
-{
+#include <iostream>
 
+LogWindow::LogWindow(const char* title, sf::TcpSocket& socket, Channel<MessageData>& channel) :
+    mTitle(title),
+    mButtonName("Send"),
+    mSocket(socket),
+    mMessageChannel(channel)
+{
+    //ctor
 }
 
-Chat::~Chat()
+LogWindow::~LogWindow()
 {
     //dtor
 }
 
-void Chat::clear()
+void LogWindow::clear()
 {
     mBuffer.clear();
     mLineOffsets.clear();
 }
 
-void Chat::send(std::string msg)
+void LogWindow::send(std::string msg)
 {
     sf::Packet packet;
     packet << PacketID::TEXT << msg;
     mSocket.send(packet);
 }
 
-void Chat::push(const char* fmt, ...)
+void LogWindow::push(const char* fmt, ...)
 {
     int old_size = mBuffer.size();
     va_list args;
@@ -41,16 +44,14 @@ void Chat::push(const char* fmt, ...)
     mScrollToBottom = true;
 }
 
-void Chat::update()
+void LogWindow::update()
 {
     MessageData msg("", "");
-    if (mChannel.receive(msg, false))
+    if (mMessageChannel.receive(msg, false))
     {
         push(msg.name.append(": ").append(msg.msg).c_str());
         push("\n");
     }
-
-    ImGui::SetNextWindowSize(ImVec2(500,400), ImGuiSetCond_FirstUseEver);
 
     ImGui::Begin(mTitle);
 
@@ -58,7 +59,7 @@ void Chat::update()
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Send"))
+    if (ImGui::Button(mButtonName) || ImGui::IsKeyPressed(sf::Keyboard::Return))
     {
         send(std::string(mMessage));
         memset(mMessage, 0, sizeof mMessage);
@@ -92,16 +93,4 @@ void Chat::update()
     ImGui::PopStyleVar();
     ImGui::EndChild();
     ImGui::End();
-}
-
-void Chat::handleEvents(sf::Event& event)
-{
-    if (event.type == sf::Event::KeyPressed)
-    {
-        if (event.key.code == sf::Keyboard::Return)
-        {
-            send(std::string(mMessage));
-            memset(mMessage, 0, sizeof mMessage);
-        }
-    }
 }

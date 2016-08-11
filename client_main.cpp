@@ -8,6 +8,8 @@
 #include "Constants.h"
 #include "States/StateMachine.h"
 
+#include <iostream>
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Chat");
@@ -28,7 +30,6 @@ int main()
 
             if (event.type == sf::Event::Closed)
             {
-                client.disconnect();
                 window.close();
             }
 

@@ -23,7 +23,7 @@ void Client::disconnect()
 {
     sf::Packet packet;
     packet << PacketID::DISCONNECT;
-    mSocket.send(packet);
+    //mSocket.send(packet);
 
     mConnected = false;
     //mSocket.disconnect();
@@ -37,11 +37,37 @@ void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* chann
         if (socket->receive(packet) == sf::Socket::Done)
         {
             PacketID type; // what type of packet
-            std::string name, senderMsg;
-            if (packet >> type >> name >> senderMsg)
+            packet >> type;
+
+            switch (type)
             {
-                MessageData msg(name, senderMsg);
-                channel->send(msg);
+                case PacketID::TEXT:
+                {
+                    std::string name, senderMsg;
+                    if (packet >> name >> senderMsg)
+                    {
+                        MessageData msg(name, senderMsg);
+                        channel->send(msg);
+                    }
+                    break;
+                }
+                case PacketID::PICTURE:
+                {
+                    break;
+                }
+                case PacketID::REQUEST_USERS:
+                {
+                    sf::Uint8 clientSize;
+                    std::vector<std::string> clients;
+                    packet >> clientSize;
+                    for (std::size_t i = 0; i < clientSize; i++)
+                    {
+                        std::string name;
+                        packet >> name;
+                        clients.push_back(name);
+                    }
+                    break;
+                }
             }
         }
     }
