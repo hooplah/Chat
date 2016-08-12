@@ -15,6 +15,7 @@ struct ClientHandle
 {
     ClientHandle() {}
 
+    sf::Uint8 id;
     std::string name;
     sf::TcpSocket socket;
 };

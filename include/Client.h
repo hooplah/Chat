@@ -18,16 +18,19 @@ class Client
 
         void disconnect();
 
-        static void listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel, std::atomic<bool>* connected);
+        static void listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* msgChannel,
+                                     Channel<std::vector<std::string>>* usersChannel, std::atomic<bool>* connected);
 
         bool isConnected(){return mConnected;}
         sf::TcpSocket& getSocket(){return mSocket;}
-        Channel<MessageData>& getChannel(){return mChannel;}
+        Channel<MessageData>& getMessageChannel(){return mMessageChannel;}
+        Channel<std::vector<std::string>>& getUsersChannel(){return mUsersChannel;}
 
     private:
         std::atomic<bool> mConnected;
         sf::TcpSocket mSocket;
-        Channel<MessageData> mChannel;
+        Channel<MessageData> mMessageChannel;
+        Channel<std::vector<std::string>> mUsersChannel; // for sending vector of online users
         std::thread mPacketListener;
 };
 

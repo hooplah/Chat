@@ -5,7 +5,7 @@
 
 Client::Client() :
     mConnected(true), // assume we can connect to the server
-    mPacketListener(listenForPackets, &mSocket, &mChannel, &mConnected)
+    mPacketListener(listenForPackets, &mSocket, &mMessageChannel, &mUsersChannel, &mConnected)
 {
     if (mSocket.connect(SERVER_IPADDRESS, PORT) == sf::Socket::Done)
         mConnected = true;
@@ -15,7 +15,6 @@ Client::Client() :
 
 Client::~Client()
 {
-    disconnect();
     mPacketListener.join();
 }
 
@@ -23,13 +22,14 @@ void Client::disconnect()
 {
     sf::Packet packet;
     packet << PacketID::DISCONNECT;
-    //mSocket.send(packet);
+    mSocket.send(packet);
 
+    mSocket.disconnect();
     mConnected = false;
-    //mSocket.disconnect();
 }
 
-void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* channel, std::atomic<bool>* connected)
+void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* msgChannel,
+                              Channel<std::vector<std::string>>* usersChannel, std::atomic<bool>* connected)
 {
     while (*connected)
     {
@@ -47,7 +47,7 @@ void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* chann
                     if (packet >> name >> senderMsg)
                     {
                         MessageData msg(name, senderMsg);
-                        channel->send(msg);
+                        msgChannel->send(msg);
                     }
                     break;
                 }
@@ -66,6 +66,7 @@ void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* chann
                         packet >> name;
                         clients.push_back(name);
                     }
+                    usersChannel->send(clients);
                     break;
                 }
             }

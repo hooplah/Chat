@@ -2,13 +2,9 @@
 
 #include "imgui/imgui.h"
 
-#include <iostream>
-
-LogWindow::LogWindow(const char* title, sf::TcpSocket& socket, Channel<MessageData>& channel) :
+LogWindow::LogWindow(const char* title) :
     mTitle(title),
-    mButtonName("Send"),
-    mSocket(socket),
-    mMessageChannel(channel)
+    mButtonName("Send")
 {
     //ctor
 }
@@ -18,17 +14,22 @@ LogWindow::~LogWindow()
     //dtor
 }
 
+void LogWindow::begin()
+{
+    ImGui::Begin(mTitle);
+}
+
+void LogWindow::end()
+{
+    ImGui::PopStyleVar();
+    ImGui::EndChild();
+    ImGui::End();
+}
+
 void LogWindow::clear()
 {
     mBuffer.clear();
     mLineOffsets.clear();
-}
-
-void LogWindow::send(std::string msg)
-{
-    sf::Packet packet;
-    packet << PacketID::TEXT << msg;
-    mSocket.send(packet);
 }
 
 void LogWindow::push(const char* fmt, ...)
@@ -46,27 +47,6 @@ void LogWindow::push(const char* fmt, ...)
 
 void LogWindow::update()
 {
-    MessageData msg("", "");
-    if (mMessageChannel.receive(msg, false))
-    {
-        push(msg.name.append(": ").append(msg.msg).c_str());
-        push("\n");
-    }
-
-    ImGui::Begin(mTitle);
-
-    ImGui::InputText("", mMessage, 255);
-
-    ImGui::SameLine();
-
-    if (ImGui::Button(mButtonName) || ImGui::IsKeyPressed(sf::Keyboard::Return))
-    {
-        send(std::string(mMessage));
-        memset(mMessage, 0, sizeof mMessage);
-    }
-
-    ImGui::Separator();
-
     ImGui::BeginChild("scrolling");
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0,1));
 
@@ -90,7 +70,4 @@ void LogWindow::update()
     if (mScrollToBottom)
         ImGui::SetScrollHere(1.0f);
     mScrollToBottom = false;
-    ImGui::PopStyleVar();
-    ImGui::EndChild();
-    ImGui::End();
 }

@@ -20,7 +20,7 @@ class LoginState : public IState
 
     private:
         Client& mClient;
-        char mName[255];
+        char mName[256];
 };
 
 #endif // LOGINSTATE_H

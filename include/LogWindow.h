@@ -15,28 +15,25 @@
 class LogWindow
 {
     public:
-        LogWindow(const char* title, sf::TcpSocket& socket, Channel<MessageData>& channel);
+        LogWindow(const char* title);
         ~LogWindow();
 
+        void begin();
+        void end();
         void clear();
-        void send(std::string msg);
-        void push(const char* fmt, ...) IM_PRINTFARGS(2);
-        void update();
+        virtual void push(const char* fmt, ...) IM_PRINTFARGS(2);
+        virtual void update();
 
         void setTitle(const char* title){mTitle=title;}
         void setButtonName(const char* name){mButtonName=name;}
 
-    private:
+    protected:
         const char* mTitle;
         const char* mButtonName;
-        char mMessage[255];
         ImGuiTextBuffer mBuffer;
         ImGuiTextFilter mFilter;
         ImVector<int> mLineOffsets; // Index to lines offset
         bool mScrollToBottom;
-
-        sf::TcpSocket& mSocket;
-        Channel<MessageData>& mMessageChannel;
 };
 
 #endif // LOGWINDOW_H

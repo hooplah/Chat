@@ -7,10 +7,12 @@
 #include "States/ChatState.h"
 #include "States/StateMachine.h"
 
+#include <iostream>
+
 LoginState::LoginState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
     mClient(client)
 {
-    //ctor
+    bzero(mName, sizeof mName);
 }
 
 LoginState::~LoginState()
@@ -23,7 +25,7 @@ void LoginState::update()
     ImGui::Begin("Login");
     ImGui::Text("Username");
 
-    ImGui::InputText("", mName, 255);
+    ImGui::InputText("", mName, sizeof mName);
     ImGui::SetWindowFocus();
 
     if (ImGui::Button("Login") || ImGui::IsKeyPressed(sf::Keyboard::Return))

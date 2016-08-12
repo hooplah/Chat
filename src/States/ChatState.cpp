@@ -3,12 +3,14 @@
 #include "States/PictureState.h"
 #include "States/StateMachine.h"
 
+#include <iostream>
+
 ChatState::ChatState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
     mClient(client),
-    mGlobalChat("Global Chat", mClient.getSocket(), mClient.getChannel())
-    //mUserList("Online Users", mClient.getSocket(), mClient.getChannel())
+    mGlobalChat("Global Chat", mClient.getSocket(), mClient.getMessageChannel()),
+    mUserList(mClient.getUsersChannel())
 {
-    //mUserList.setButtonName("Search");
+    mUserList.setButtonName("Search");
 }
 
 ChatState::~ChatState()
@@ -23,7 +25,7 @@ void ChatState::update()
     for (auto& chat : mPrivateChats)
         chat.update();
 
-    //mUserList.update();
+    mUserList.update();
 
     sf::Packet packet;
     packet << PacketID::REQUEST_USERS;

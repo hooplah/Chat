@@ -58,22 +58,25 @@ void Server::update()
             case PacketID::DISCONNECT:
             {
                 std::cout << client.name << " disconnected" << std::endl;
-                //client.socket.disconnect();
-                //mClients.erase(clientID);
+                mSelector.remove(client.socket);
+                client.socket.disconnect();
+                mClients.erase(client.id);
                 break;
             }
             case PacketID::REQUEST_USERS:
             {
-                /*std::cout << client.name << " requested user list" << std::endl;
+                //std::cout << client.name << " requested user list" << std::endl;
                 sf::Packet out;
                 sf::Uint8 clientSize(mClients.size()-1);
                 out << PacketID::REQUEST_USERS << clientSize;
                 for (auto& other_client : mClients)
                 {
                     if (other_client.second->name != client.name)
-                        out << client.name;
+                    {
+                        out << other_client.second->name;
+                    }
                 }
-                client.socket.send(out);*/
+                client.socket.send(out);
                 break;
             }
         }
@@ -102,10 +105,17 @@ void Server::listenForPackets(sf::TcpListener* listener, sf::Socket* socket, sf:
                     {
                         packet >> client->name;
                         std::cout << client->name << " connected from " << client->socket.getRemoteAddress() << std::endl;
+                        selector->add(client->socket);
+                        client->id = clients->size();
+                        clients->emplace(client->id, std::move(client));
                     }
-
-                    selector->add(client->socket);
-                    clients->emplace(clients->size(), std::move(client));
+                    /*else if (client->socket.receive(packet) == sf::Socket::Disconnected)
+                    {
+                        std::cout << "disconnect\n";
+                        sf::Packet packet;
+                        packet << PacketID::DISCONNECT;
+                        packetQueue->push(std::tuple<ClientID, sf::Packet>(client->id, packet));
+                    }*/
                 }
 
                 clientMutex->unlock();
@@ -121,7 +131,7 @@ void Server::listenForPackets(sf::TcpListener* listener, sf::Socket* socket, sf:
                 {
                     if (client.socket.receive(packet) == sf::Socket::Done)
                     {
-                        packetQueue->push(std::tuple<ClientID, sf::Packet>(clientMap.first, packet));
+                        packetQueue->push(std::tuple<ClientID, sf::Packet>(client.id, packet));
                     }
                 }
             }
