@@ -25,6 +25,16 @@ void ChatState::update()
     for (auto& chat : mPrivateChats)
         chat.update();
 
+    for (auto& button : mUserList.getButtons())
+    {
+        bool pressed = std::get<0>(button);
+        const char* name = std::get<1>(button);
+        if (pressed)
+        {
+            //mPrivateChats.push_back(ChatWindow(name, mClient.getSocket(), mClient.getMessageChannel()));
+        }
+    }
+
     mUserList.update();
 
     sf::Packet packet;

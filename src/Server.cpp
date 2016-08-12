@@ -18,12 +18,13 @@ Server::~Server()
 {
     mRunThread = false;
     mPacketListener.join();
+    mListener.close();
 }
 
 void Server::update()
 {
     mPacketMutex.lock();
-    while (!mPacketQueue.empty())
+    if (!mPacketQueue.empty())
     {
         std::tuple<ClientID, sf::Packet> packet_tuple = mPacketQueue.front();
         mPacketQueue.pop();
@@ -59,7 +60,6 @@ void Server::update()
             {
                 std::cout << client.name << " disconnected" << std::endl;
                 mSelector.remove(client.socket);
-                client.socket.disconnect();
                 mClients.erase(client.id);
                 break;
             }

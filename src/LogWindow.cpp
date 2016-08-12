@@ -17,6 +17,8 @@ LogWindow::~LogWindow()
 void LogWindow::begin()
 {
     ImGui::Begin(mTitle);
+    ImGui::BeginChild("scrolling");
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0,1));
 }
 
 void LogWindow::end()
@@ -47,9 +49,6 @@ void LogWindow::push(const char* fmt, ...)
 
 void LogWindow::update()
 {
-    ImGui::BeginChild("scrolling");
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0,1));
-
     if (mFilter.IsActive())
     {
         const char* buf_begin = mBuffer.begin();

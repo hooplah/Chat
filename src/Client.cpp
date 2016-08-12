@@ -24,7 +24,7 @@ void Client::disconnect()
     packet << PacketID::DISCONNECT;
     mSocket.send(packet);
 
-    mSocket.disconnect();
+    //mSocket.disconnect();
     mConnected = false;
 }
 

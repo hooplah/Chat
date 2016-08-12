@@ -3,6 +3,7 @@
 
 #include "LogWindow.h"
 
+#include <tuple>
 
 class OnlineUsersWindow : public LogWindow
 {
@@ -13,9 +14,11 @@ class OnlineUsersWindow : public LogWindow
         void push(const char* fmt, ...) IM_PRINTFARGS(2);
         void update();
 
+        std::vector<std::tuple<bool, const char*>>& getButtons(){return mButtons;}
+
     private:
         Channel<std::vector<std::string>>& mChannel;
-        std::vector<std::string> mLines;
+        std::vector<std::tuple<bool, const char*>> mButtons;
 };
 
 #endif // ONLINEUSERSWINDOW_H

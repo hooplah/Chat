@@ -1,5 +1,7 @@
 #include "OnlineUsersWindow.h"
 
+#include <iostream>
+
 OnlineUsersWindow::OnlineUsersWindow(Channel<std::vector<std::string>>& channel) : LogWindow("Online Users"),
     mChannel(channel)
 {
@@ -13,8 +15,6 @@ OnlineUsersWindow::~OnlineUsersWindow()
 
 void OnlineUsersWindow::push(const char* fmt, ...)
 {
-    //LogWindow::push(fmt);
-    ImGui::Button(fmt, ImGui::CalcTextSize(fmt));
 }
 
 void OnlineUsersWindow::update()
@@ -27,12 +27,14 @@ void OnlineUsersWindow::update()
         clear();
         for (auto& client : clients)
         {
-            mLines.push_back(client);
-            push(client.c_str());
+            bool button = ImGui::Button(client.c_str(), ImGui::CalcTextSize(client.c_str()));
+            mButtons.push_back(std::make_pair(button, client.c_str()));
         }
     }
 
-    LogWindow::update();
+    if (mScrollToBottom)
+        ImGui::SetScrollHere(1.0f);
+    mScrollToBottom = false;
 
     LogWindow::end();
 }
