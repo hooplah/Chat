@@ -56,15 +56,7 @@ void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* globa
                 case PacketID::PICTURE:
                 {
                     sf::Image image;
-                    sf::Uint32 size;
-                    sf::Vector2u picSize;
-                    std::size_t received;
-                    const sf::Uint8* pixelPtr;
-
-                    packet >> size;
-                    packet >> picSize.x >> picSize.y;
-                    pixelPtr = static_cast<const sf::Uint8*>(packet.getData());
-                    image.create(picSize.x, picSize.y, pixelPtr);
+                    image.loadFromMemory(packet.getData(), packet.getDataSize());
                     picChannel->send(image);
                     break;
                 }
