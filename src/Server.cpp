@@ -49,18 +49,13 @@ void Server::update()
                     out << PacketID::TEXT << name << msg;
                     other_client.second->socket.send(out);
                 }
-
                 break;
             }
             case PacketID::PICTURE:
             {
-                break;
-            }
-            case PacketID::DISCONNECT:
-            {
-                std::cout << client.name << " disconnected" << std::endl;
-                mSelector.remove(client.socket);
-                mClients.erase(client.id);
+                std::cout << client.name << " sent an image" << std::endl;
+                for (auto& other_client : mClients)
+                    other_client.second->socket.send(packet); // forward packet
                 break;
             }
             case PacketID::REQUEST_USERS:
@@ -77,6 +72,13 @@ void Server::update()
                     }
                 }
                 client.socket.send(out);
+                break;
+            }
+            case PacketID::DISCONNECT:
+            {
+                std::cout << client.name << " disconnected" << std::endl;
+                mSelector.remove(client.socket);
+                mClients.erase(client.id);
                 break;
             }
         }
@@ -109,13 +111,6 @@ void Server::listenForPackets(sf::TcpListener* listener, sf::Socket* socket, sf:
                         client->id = clients->size();
                         clients->emplace(client->id, std::move(client));
                     }
-                    /*else if (client->socket.receive(packet) == sf::Socket::Disconnected)
-                    {
-                        std::cout << "disconnect\n";
-                        sf::Packet packet;
-                        packet << PacketID::DISCONNECT;
-                        packetQueue->push(std::tuple<ClientID, sf::Packet>(client->id, packet));
-                    }*/
                 }
 
                 clientMutex->unlock();
@@ -137,5 +132,14 @@ void Server::listenForPackets(sf::TcpListener* listener, sf::Socket* socket, sf:
             }
             clientMutex->unlock();
         }
+    }
+}
+
+ClientID Server::findClientByName(std::string name)
+{
+    for (auto& client : mClients)
+    {
+        if (name == client.second->name)
+            return client.first;
     }
 }

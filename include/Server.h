@@ -11,6 +11,9 @@
 
 #include <SFML/Network.hpp>
 
+#include "Message.h"
+#include "Channel.h"
+
 struct ClientHandle
 {
     ClientHandle() {}
@@ -19,8 +22,6 @@ struct ClientHandle
     std::string name;
     sf::TcpSocket socket;
 };
-
-typedef sf::Uint8 ClientID;
 
 class Server
 {
@@ -36,10 +37,14 @@ class Server
                                      std::queue<std::tuple<ClientID, sf::Packet>>* packetQueue,
                                      std::mutex* packetMutex, std::mutex* clientMutex, std::atomic<bool>* runThread);
 
+        // helper functions
+        ClientID findClientByName(std::string name);
+
         sf::TcpListener mListener;
         sf::TcpSocket mSocket;
         sf::SocketSelector mSelector;
         std::map<ClientID, std::unique_ptr<ClientHandle>> mClients;
+        std::vector<ChatData> mChats;
         std::queue<std::tuple<ClientID, sf::Packet>> mPacketQueue;
         std::atomic<bool> mRunThread;
 

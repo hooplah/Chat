@@ -13,10 +13,6 @@ OnlineUsersWindow::~OnlineUsersWindow()
     //dtor
 }
 
-void OnlineUsersWindow::push(const char* fmt, ...)
-{
-}
-
 void OnlineUsersWindow::update()
 {
     LogWindow::begin();
@@ -25,10 +21,10 @@ void OnlineUsersWindow::update()
     if (mChannel.receive(clients, false))
     {
         clear();
+        mButtons.clear();
         for (auto& client : clients)
         {
-            bool button = ImGui::Button(client.c_str(), ImGui::CalcTextSize(client.c_str()));
-            mButtons.push_back(std::make_pair(button, client.c_str()));
+            mButtons.push_back(std::make_pair(ImGui::Button(client.c_str()), client.c_str()));
         }
     }
 

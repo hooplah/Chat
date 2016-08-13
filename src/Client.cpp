@@ -1,11 +1,13 @@
 #include "Client.h"
 
+#include <SFML/Graphics.hpp>
+
 #include "Constants.h"
 #include "PacketID.h"
 
 Client::Client() :
     mConnected(true), // assume we can connect to the server
-    mPacketListener(listenForPackets, &mSocket, &mMessageChannel, &mUsersChannel, &mConnected)
+    mPacketListener(listenForPackets, &mSocket, &mGlobalChannel, &mPictureChannel, &mUsersChannel, &mConnected)
 {
     if (mSocket.connect(SERVER_IPADDRESS, PORT) == sf::Socket::Done)
         mConnected = true;
@@ -28,7 +30,7 @@ void Client::disconnect()
     mConnected = false;
 }
 
-void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* msgChannel,
+void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* globalChannel, Channel<sf::Image>* picChannel,
                               Channel<std::vector<std::string>>* usersChannel, std::atomic<bool>* connected)
 {
     while (*connected)
@@ -47,12 +49,23 @@ void Client::listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* msgCh
                     if (packet >> name >> senderMsg)
                     {
                         MessageData msg(name, senderMsg);
-                        msgChannel->send(msg);
+                        globalChannel->send(msg);
                     }
                     break;
                 }
                 case PacketID::PICTURE:
                 {
+                    sf::Image image;
+                    sf::Uint32 size;
+                    sf::Vector2u picSize;
+                    std::size_t received;
+                    const sf::Uint8* pixelPtr;
+
+                    packet >> size;
+                    packet >> picSize.x >> picSize.y;
+                    pixelPtr = static_cast<const sf::Uint8*>(packet.getData());
+                    image.create(picSize.x, picSize.y, pixelPtr);
+                    picChannel->send(image);
                     break;
                 }
                 case PacketID::REQUEST_USERS:

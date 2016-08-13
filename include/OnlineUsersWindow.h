@@ -11,7 +11,6 @@ class OnlineUsersWindow : public LogWindow
         OnlineUsersWindow(Channel<std::vector<std::string>>& channel);
         ~OnlineUsersWindow();
 
-        void push(const char* fmt, ...) IM_PRINTFARGS(2);
         void update();
 
         std::vector<std::tuple<bool, const char*>>& getButtons(){return mButtons;}

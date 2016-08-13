@@ -9,14 +9,13 @@ class ChatWindow : public LogWindow
         ChatWindow(const char* title, sf::TcpSocket& socket, Channel<MessageData>& msgChannel);
         ~ChatWindow();
 
-        void push(const char* fmt, ...) IM_PRINTFARGS(2);
         void send(std::string msg);
         void update();
 
     private:
         char mMessage[256];
         sf::TcpSocket& mSocket;
-        Channel<MessageData>& mMessageChannel;
+        Channel<MessageData>& mChannel;
 };
 
 #endif // CHATWINDOW_H

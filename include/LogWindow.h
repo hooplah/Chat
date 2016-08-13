@@ -21,7 +21,7 @@ class LogWindow
         void begin();
         void end();
         void clear();
-        virtual void push(const char* fmt, ...) IM_PRINTFARGS(2);
+        void push(const char* fmt, ...) IM_PRINTFARGS(2);
         virtual void update();
 
         void setTitle(const char* title){mTitle=title;}

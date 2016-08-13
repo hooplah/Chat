@@ -7,7 +7,7 @@
 
 ChatState::ChatState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
     mClient(client),
-    mGlobalChat("Global Chat", mClient.getSocket(), mClient.getMessageChannel()),
+    mGlobalChat("Global Chat", mClient.getSocket(), mClient.getGlobalChannel()),
     mUserList(mClient.getUsersChannel())
 {
     mUserList.setButtonName("Search");
@@ -31,7 +31,7 @@ void ChatState::update()
         const char* name = std::get<1>(button);
         if (pressed)
         {
-            //mPrivateChats.push_back(ChatWindow(name, mClient.getSocket(), mClient.getMessageChannel()));
+            //mPrivateChats.push_back(ChatWindow(name, mClient.getSocket(), mClient.getMessageChannel(), name));
         }
     }
 
@@ -52,7 +52,7 @@ void ChatState::handleEvents(sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right)
         {
-            //mNext = StateMachine::build<PictureState>(mMachine, false, std::ref(mClient));
+            mNext = StateMachine::build<PictureState>(mMachine, false, std::ref(mClient));
         }
     }
 }

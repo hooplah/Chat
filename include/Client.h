@@ -6,6 +6,7 @@
 #include <thread>
 
 #include <SFML/Network.hpp>
+#include <SFML/Graphics/Image.hpp>
 
 #include "Channel.h"
 #include "Message.h"
@@ -18,19 +19,21 @@ class Client
 
         void disconnect();
 
-        static void listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* msgChannel,
+        static void listenForPackets(sf::TcpSocket* socket, Channel<MessageData>* globalChannel, Channel<sf::Image>* picChannel,
                                      Channel<std::vector<std::string>>* usersChannel, std::atomic<bool>* connected);
 
         bool isConnected(){return mConnected;}
         sf::TcpSocket& getSocket(){return mSocket;}
-        Channel<MessageData>& getMessageChannel(){return mMessageChannel;}
+        Channel<MessageData>& getGlobalChannel(){return mGlobalChannel;}
         Channel<std::vector<std::string>>& getUsersChannel(){return mUsersChannel;}
+        Channel<sf::Image>& getPictureChannel(){return mPictureChannel;}
 
     private:
         std::atomic<bool> mConnected;
         sf::TcpSocket mSocket;
-        Channel<MessageData> mMessageChannel;
-        Channel<std::vector<std::string>> mUsersChannel; // for sending vector of online users
+        Channel<MessageData> mGlobalChannel;
+        Channel<std::vector<std::string>> mUsersChannel; // for sending names of online users
+        Channel<sf::Image> mPictureChannel;
         std::thread mPacketListener;
 };
 
