@@ -54,7 +54,7 @@ void PictureState::handleEvents(sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right)
         {
-            mNext = StateMachine::build<ChatState>(mMachine, false, std::ref(mClient));
+            mMachine.lastState();
         }
     }
 }

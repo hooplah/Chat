@@ -52,7 +52,7 @@ void ChatState::handleEvents(sf::Event& event)
     {
         if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right)
         {
-            mNext = StateMachine::build<PictureState>(mMachine, false, std::ref(mClient));
+            mMachine.run(StateMachine::build<PictureState>(mMachine, false, std::ref(mClient)));
         }
     }
 }

@@ -41,10 +41,10 @@ void StateMachine::nextState()
         std::unique_ptr<IState> temp = mStates.top()->next();
 
         // Only change states if there's a next one existing
-        if(temp != nullptr)
+        if (temp != nullptr)
         {
             // Replace the running state
-            if(temp->isReplacing())
+            if (temp->isReplacing())
                 mStates.pop();
             // Pause the running state
             else
