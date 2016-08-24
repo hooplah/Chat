@@ -22,6 +22,8 @@ class PictureState : public IState
 
     private:
         Client& mClient;
+
+        char mPath[256]; // file name
         sf::Image mImage;
         sf::Texture mTexture;
         sf::Sprite mSprite;

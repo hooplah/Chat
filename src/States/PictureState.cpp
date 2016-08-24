@@ -8,8 +8,8 @@
 PictureState::PictureState(StateMachine& stateMachine, bool replace, Client& client) : IState(stateMachine, replace),
     mClient(client)
 {
-    mImage.loadFromFile("assets/pic.png");
-    mTexture.loadFromImage(mImage);
+    //mImage.loadFromFile("assets/pic.png");
+    //mTexture.loadFromImage(mImage);
     //mSprite = sf::Sprite(mTexture);
 }
 
@@ -21,7 +21,26 @@ PictureState::~PictureState()
 void PictureState::update()
 {
     ImGui::Begin("");
+    if (ImGui::Button("Load"))
+    {
+        ImGui::OpenPopup("Load Image");
+    }
 
+    bool open = true;
+    if (ImGui::BeginPopupModal("Load Image", &open))
+    {
+        ImGui::InputText("", mPath, sizeof mPath);
+        ImGui::SameLine();
+        if (ImGui::Button("Load##"))
+        {
+            mImage.loadFromFile(std::string(mPath));
+            mTexture.loadFromImage(mImage);
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
     if (ImGui::Button("Send"))
     {
         sf::Packet packet;
@@ -39,7 +58,6 @@ void PictureState::update()
         mTexture.loadFromImage(mImage);
         mSprite.setTexture(mTexture);
     }
-
     ImGui::End();
 }
 
